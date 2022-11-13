@@ -1,0 +1,2 @@
+const String NOTIFICATION = 'NOTIFICATION';
+bool? SWITCHVALUE;
