@@ -15,7 +15,7 @@ class ScreenNavigation extends StatelessWidget {
   ];
 
   final List<Widget> _screens = <Widget>[
-    const ScreenHome(),
+    ScreenHome(),
     ScreenPlaylist(),
     const ScreenSetting(),
   ];

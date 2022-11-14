@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/alert_functions.dart';
 
@@ -11,18 +12,11 @@ import 'package:music_player/presentations/screens/screen_search/screen_search.d
 import 'package:music_player/presentations/widgets/custom_playlist.dart';
 import 'package:music_player/presentations/widgets/song_list_tile.dart';
 
-import '../../../domain/models/db_functions/db_function.dart';
-
-class ScreenHome extends StatefulWidget {
-  const ScreenHome({
+class ScreenHome extends StatelessWidget {
+  ScreenHome({
     super.key,
   });
 
-  @override
-  State<ScreenHome> createState() => _ScreenHomeState();
-}
-
-class _ScreenHomeState extends State<ScreenHome> {
   String greeting() {
     var hour = DateTime.now().hour;
     if (hour < 12) {
@@ -75,7 +69,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                 color: kLightBlue,
                 size: 27,
               ),
-            )
+            ),
           ],
         ),
         Expanded(

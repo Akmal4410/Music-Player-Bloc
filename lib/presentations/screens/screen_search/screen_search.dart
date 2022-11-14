@@ -1,46 +1,22 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:music_player/domain/models/songs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_player/application/screen_search/screen_search_bloc.dart';
 import 'package:music_player/presentations/alert_functions.dart';
-
 import 'package:music_player/presentations/widgets/search_widget.dart';
 import 'package:music_player/presentations/widgets/song_list_tile.dart';
 
-import '../../../domain/models/db_functions/db_function.dart';
-
-class ScreenSearch extends StatefulWidget {
-  const ScreenSearch({super.key, required this.audioPlayer});
+class ScreenSearch extends StatelessWidget {
+  ScreenSearch({super.key, required this.audioPlayer});
   final AssetsAudioPlayer audioPlayer;
 
-  @override
-  State<ScreenSearch> createState() => _ScreenSearchState();
-}
-
-class _ScreenSearchState extends State<ScreenSearch> {
   final TextEditingController _searchController = TextEditingController();
-  Box<Songs> songBox = getSongBox();
-  List<Songs>? dbSongs;
-  List<Songs>? searchedSongs;
-
-  @override
-  void initState() {
-    super.initState();
-    dbSongs = songBox.values.toList().cast<Songs>();
-    searchedSongs = List<Songs>.from(dbSongs!).toList().cast<Songs>();
-  }
-
-  searchSongfomDb(String searchSong) {
-    setState(() {
-      searchedSongs = dbSongs!
-          .where((song) =>
-              song.title.toLowerCase().contains(searchSong.toLowerCase()))
-          .toList();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<ScreenSearchBloc>(context).add(const InitialSearch());
+    });
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
@@ -70,30 +46,37 @@ class _ScreenSearchState extends State<ScreenSearch> {
               hintText: 'Songs or Playlist',
               icon: Icons.search,
               onChanged: (value) {
-                searchSongfomDb(value);
+                BlocProvider.of<ScreenSearchBloc>(context).add(
+                  SearchStudent(searchValue: value),
+                );
               },
             ),
-            Expanded(
-              child: (searchedSongs!.isEmpty)
-                  ? const Center(
-                      child: Text('No Songs Found'),
-                    )
-                  : ListView.builder(
-                      itemCount: searchedSongs!.length,
-                      itemBuilder: (ctx, index) {
-                        return SongListTile(
-                          onPressed: () {
-                            showPlaylistModalSheet(
-                                context: context,
-                                screenHeight: screenHeight,
-                                song: dbSongs![index]);
+            BlocBuilder<ScreenSearchBloc, ScreenSearchState>(
+              builder: (context, state) {
+                return Expanded(
+                  child: (state.songs.isEmpty)
+                      ? const Center(
+                          child: Text('No Songs Found'),
+                        )
+                      : ListView.builder(
+                          itemCount: state.searchedSongs.length,
+                          itemBuilder: (ctx, index) {
+                            return SongListTile(
+                              onPressed: () {
+                                showPlaylistModalSheet(
+                                  context: context,
+                                  screenHeight: screenHeight,
+                                  song: state.searchedSongs[index],
+                                );
+                              },
+                              songList: state.searchedSongs,
+                              index: index,
+                              audioPlayer: audioPlayer,
+                            );
                           },
-                          songList: searchedSongs!,
-                          index: index,
-                          audioPlayer: widget.audioPlayer,
-                        );
-                      },
-                    ),
+                        ),
+                );
+              },
             ),
           ],
         ),

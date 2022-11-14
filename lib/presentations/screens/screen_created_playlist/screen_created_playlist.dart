@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -7,7 +6,6 @@ import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/alert_functions.dart';
 import 'package:music_player/functions/playlist.dart';
-
 import 'package:music_player/constants/palettes/color_palette.dart';
 import 'package:music_player/presentations/widgets/search_widget.dart';
 import 'package:music_player/presentations/widgets/song_list_tile.dart';

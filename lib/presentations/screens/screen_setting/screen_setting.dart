@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_player/application/screen_setting/screen_setting_bloc.dart';
 import 'package:music_player/constants/palettes/color_palette.dart';
-import 'package:music_player/presentations/screens/screen_setting_tile/screen_setting_tile.dart';
+import 'package:music_player/presentations/widgets/screen_setting_tile.dart';
 import 'package:music_player/presentations/widgets/setting_list_tile.dart';
 import 'package:share_plus/share_plus.dart';
 
