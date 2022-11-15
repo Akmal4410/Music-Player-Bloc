@@ -30,7 +30,7 @@ class SongListTile extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     return ListTile(
       onTap: () {
-        Recents.addSongsToRecents(songId: songList[index].id);
+        Recents.addSongsToRecents(songId: songList[index].id, context: context);
         showMiniPlayer(
           context: context,
           index: index,
@@ -94,6 +94,9 @@ class SongListTile extends StatelessWidget {
                   );
                   BlocProvider.of<FavRecentMostBloc>(context).add(
                     const GetSongsList(),
+                  );
+                  BlocProvider.of<FavRecentMostBloc>(context).add(
+                    const GetPlaylistLength(),
                   );
                 },
                 icon: Icon(

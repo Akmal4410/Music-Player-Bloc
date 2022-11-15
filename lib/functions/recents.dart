@@ -1,6 +1,9 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/application/fav_recent_most/fav_recent_most_bloc.dart';
 import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/functions/mostPlayed.dart';
@@ -9,7 +12,8 @@ class Recents {
   static final Box<Songs> songBox = getSongBox();
   static final Box<List> playlistBox = getPlaylistBox();
 
-  static addSongsToRecents({required String songId}) async {
+  static addSongsToRecents(
+      {required String songId, required BuildContext context}) async {
     final List<Songs> dbSongs = songBox.values.toList().cast<Songs>();
     final List<Songs> recentSongList =
         playlistBox.get('Recent')!.toList().cast<Songs>();
@@ -20,7 +24,7 @@ class Recents {
 
     int count = recentSong.count;
     recentSong.count = count + 1;
-    MostPlayed.addSongToPlaylist(songId);
+    MostPlayed.addSongToPlaylist(songId, context);
     log("${recentSong.count} Recent song Count");
 
     ////////////////////////////////////////////////////////////////////////////
@@ -30,6 +34,9 @@ class Recents {
     if (recentSongList.where((song) => song.id == recentSong.id).isEmpty) {
       recentSongList.insert(0, recentSong);
       await playlistBox.put('Recent', recentSongList);
+      BlocProvider.of<FavRecentMostBloc>(context).add(
+        const GetPlaylistLength(),
+      );
     } else {
       recentSongList.removeWhere((song) => song.id == recentSong.id);
       recentSongList.insert(0, recentSong);

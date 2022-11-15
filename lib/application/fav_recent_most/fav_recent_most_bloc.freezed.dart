@@ -19,32 +19,38 @@ mixin _$FavRecentMostEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() getSongsList,
+    required TResult Function() getPlaylistLength,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? getSongsList,
+    TResult? Function()? getPlaylistLength,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? getSongsList,
+    TResult Function()? getPlaylistLength,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GetSongsList value) getSongsList,
+    required TResult Function(GetPlaylistLength value) getPlaylistLength,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GetSongsList value)? getSongsList,
+    TResult? Function(GetPlaylistLength value)? getPlaylistLength,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GetSongsList value)? getSongsList,
+    TResult Function(GetPlaylistLength value)? getPlaylistLength,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -107,6 +113,7 @@ class _$GetSongsList implements GetSongsList {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() getSongsList,
+    required TResult Function() getPlaylistLength,
   }) {
     return getSongsList();
   }
@@ -115,6 +122,7 @@ class _$GetSongsList implements GetSongsList {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? getSongsList,
+    TResult? Function()? getPlaylistLength,
   }) {
     return getSongsList?.call();
   }
@@ -123,6 +131,7 @@ class _$GetSongsList implements GetSongsList {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? getSongsList,
+    TResult Function()? getPlaylistLength,
     required TResult orElse(),
   }) {
     if (getSongsList != null) {
@@ -135,6 +144,7 @@ class _$GetSongsList implements GetSongsList {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GetSongsList value) getSongsList,
+    required TResult Function(GetPlaylistLength value) getPlaylistLength,
   }) {
     return getSongsList(this);
   }
@@ -143,6 +153,7 @@ class _$GetSongsList implements GetSongsList {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GetSongsList value)? getSongsList,
+    TResult? Function(GetPlaylistLength value)? getPlaylistLength,
   }) {
     return getSongsList?.call(this);
   }
@@ -151,6 +162,7 @@ class _$GetSongsList implements GetSongsList {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GetSongsList value)? getSongsList,
+    TResult Function(GetPlaylistLength value)? getPlaylistLength,
     required TResult orElse(),
   }) {
     if (getSongsList != null) {
@@ -165,10 +177,115 @@ abstract class GetSongsList implements FavRecentMostEvent {
 }
 
 /// @nodoc
+abstract class _$$GetPlaylistLengthCopyWith<$Res> {
+  factory _$$GetPlaylistLengthCopyWith(
+          _$GetPlaylistLength value, $Res Function(_$GetPlaylistLength) then) =
+      __$$GetPlaylistLengthCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$GetPlaylistLengthCopyWithImpl<$Res>
+    extends _$FavRecentMostEventCopyWithImpl<$Res, _$GetPlaylistLength>
+    implements _$$GetPlaylistLengthCopyWith<$Res> {
+  __$$GetPlaylistLengthCopyWithImpl(
+      _$GetPlaylistLength _value, $Res Function(_$GetPlaylistLength) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$GetPlaylistLength implements GetPlaylistLength {
+  const _$GetPlaylistLength();
+
+  @override
+  String toString() {
+    return 'FavRecentMostEvent.getPlaylistLength()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$GetPlaylistLength);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() getSongsList,
+    required TResult Function() getPlaylistLength,
+  }) {
+    return getPlaylistLength();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? getSongsList,
+    TResult? Function()? getPlaylistLength,
+  }) {
+    return getPlaylistLength?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? getSongsList,
+    TResult Function()? getPlaylistLength,
+    required TResult orElse(),
+  }) {
+    if (getPlaylistLength != null) {
+      return getPlaylistLength();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(GetSongsList value) getSongsList,
+    required TResult Function(GetPlaylistLength value) getPlaylistLength,
+  }) {
+    return getPlaylistLength(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(GetSongsList value)? getSongsList,
+    TResult? Function(GetPlaylistLength value)? getPlaylistLength,
+  }) {
+    return getPlaylistLength?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(GetSongsList value)? getSongsList,
+    TResult Function(GetPlaylistLength value)? getPlaylistLength,
+    required TResult orElse(),
+  }) {
+    if (getPlaylistLength != null) {
+      return getPlaylistLength(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class GetPlaylistLength implements FavRecentMostEvent {
+  const factory GetPlaylistLength() = _$GetPlaylistLength;
+}
+
+/// @nodoc
 mixin _$FavRecentMostState {
   List<Songs> get favSongList => throw _privateConstructorUsedError;
   List<Songs> get recentList => throw _privateConstructorUsedError;
   List<Songs> get mostList => throw _privateConstructorUsedError;
+  int get favSongListlength => throw _privateConstructorUsedError;
+  int get recentListLength => throw _privateConstructorUsedError;
+  int get mostListLength => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $FavRecentMostStateCopyWith<FavRecentMostState> get copyWith =>
@@ -182,7 +299,12 @@ abstract class $FavRecentMostStateCopyWith<$Res> {
       _$FavRecentMostStateCopyWithImpl<$Res, FavRecentMostState>;
   @useResult
   $Res call(
-      {List<Songs> favSongList, List<Songs> recentList, List<Songs> mostList});
+      {List<Songs> favSongList,
+      List<Songs> recentList,
+      List<Songs> mostList,
+      int favSongListlength,
+      int recentListLength,
+      int mostListLength});
 }
 
 /// @nodoc
@@ -201,6 +323,9 @@ class _$FavRecentMostStateCopyWithImpl<$Res, $Val extends FavRecentMostState>
     Object? favSongList = null,
     Object? recentList = null,
     Object? mostList = null,
+    Object? favSongListlength = null,
+    Object? recentListLength = null,
+    Object? mostListLength = null,
   }) {
     return _then(_value.copyWith(
       favSongList: null == favSongList
@@ -215,6 +340,18 @@ class _$FavRecentMostStateCopyWithImpl<$Res, $Val extends FavRecentMostState>
           ? _value.mostList
           : mostList // ignore: cast_nullable_to_non_nullable
               as List<Songs>,
+      favSongListlength: null == favSongListlength
+          ? _value.favSongListlength
+          : favSongListlength // ignore: cast_nullable_to_non_nullable
+              as int,
+      recentListLength: null == recentListLength
+          ? _value.recentListLength
+          : recentListLength // ignore: cast_nullable_to_non_nullable
+              as int,
+      mostListLength: null == mostListLength
+          ? _value.mostListLength
+          : mostListLength // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -228,7 +365,12 @@ abstract class _$$_InitialCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<Songs> favSongList, List<Songs> recentList, List<Songs> mostList});
+      {List<Songs> favSongList,
+      List<Songs> recentList,
+      List<Songs> mostList,
+      int favSongListlength,
+      int recentListLength,
+      int mostListLength});
 }
 
 /// @nodoc
@@ -244,6 +386,9 @@ class __$$_InitialCopyWithImpl<$Res>
     Object? favSongList = null,
     Object? recentList = null,
     Object? mostList = null,
+    Object? favSongListlength = null,
+    Object? recentListLength = null,
+    Object? mostListLength = null,
   }) {
     return _then(_$_Initial(
       favSongList: null == favSongList
@@ -258,6 +403,18 @@ class __$$_InitialCopyWithImpl<$Res>
           ? _value._mostList
           : mostList // ignore: cast_nullable_to_non_nullable
               as List<Songs>,
+      favSongListlength: null == favSongListlength
+          ? _value.favSongListlength
+          : favSongListlength // ignore: cast_nullable_to_non_nullable
+              as int,
+      recentListLength: null == recentListLength
+          ? _value.recentListLength
+          : recentListLength // ignore: cast_nullable_to_non_nullable
+              as int,
+      mostListLength: null == mostListLength
+          ? _value.mostListLength
+          : mostListLength // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -268,7 +425,10 @@ class _$_Initial implements _Initial {
   const _$_Initial(
       {required final List<Songs> favSongList,
       required final List<Songs> recentList,
-      required final List<Songs> mostList})
+      required final List<Songs> mostList,
+      required this.favSongListlength,
+      required this.recentListLength,
+      required this.mostListLength})
       : _favSongList = favSongList,
         _recentList = recentList,
         _mostList = mostList;
@@ -295,8 +455,15 @@ class _$_Initial implements _Initial {
   }
 
   @override
+  final int favSongListlength;
+  @override
+  final int recentListLength;
+  @override
+  final int mostListLength;
+
+  @override
   String toString() {
-    return 'FavRecentMostState(favSongList: $favSongList, recentList: $recentList, mostList: $mostList)';
+    return 'FavRecentMostState(favSongList: $favSongList, recentList: $recentList, mostList: $mostList, favSongListlength: $favSongListlength, recentListLength: $recentListLength, mostListLength: $mostListLength)';
   }
 
   @override
@@ -308,7 +475,13 @@ class _$_Initial implements _Initial {
                 .equals(other._favSongList, _favSongList) &&
             const DeepCollectionEquality()
                 .equals(other._recentList, _recentList) &&
-            const DeepCollectionEquality().equals(other._mostList, _mostList));
+            const DeepCollectionEquality().equals(other._mostList, _mostList) &&
+            (identical(other.favSongListlength, favSongListlength) ||
+                other.favSongListlength == favSongListlength) &&
+            (identical(other.recentListLength, recentListLength) ||
+                other.recentListLength == recentListLength) &&
+            (identical(other.mostListLength, mostListLength) ||
+                other.mostListLength == mostListLength));
   }
 
   @override
@@ -316,7 +489,10 @@ class _$_Initial implements _Initial {
       runtimeType,
       const DeepCollectionEquality().hash(_favSongList),
       const DeepCollectionEquality().hash(_recentList),
-      const DeepCollectionEquality().hash(_mostList));
+      const DeepCollectionEquality().hash(_mostList),
+      favSongListlength,
+      recentListLength,
+      mostListLength);
 
   @JsonKey(ignore: true)
   @override
@@ -329,7 +505,10 @@ abstract class _Initial implements FavRecentMostState {
   const factory _Initial(
       {required final List<Songs> favSongList,
       required final List<Songs> recentList,
-      required final List<Songs> mostList}) = _$_Initial;
+      required final List<Songs> mostList,
+      required final int favSongListlength,
+      required final int recentListLength,
+      required final int mostListLength}) = _$_Initial;
 
   @override
   List<Songs> get favSongList;
@@ -337,6 +516,12 @@ abstract class _Initial implements FavRecentMostState {
   List<Songs> get recentList;
   @override
   List<Songs> get mostList;
+  @override
+  int get favSongListlength;
+  @override
+  int get recentListLength;
+  @override
+  int get mostListLength;
   @override
   @JsonKey(ignore: true)
   _$$_InitialCopyWith<_$_Initial> get copyWith =>

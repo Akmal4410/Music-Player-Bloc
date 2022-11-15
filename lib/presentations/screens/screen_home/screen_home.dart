@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_player/application/fav_recent_most/fav_recent_most_bloc.dart';
 import 'package:music_player/application/screen_home/screen_home_bloc.dart';
 import 'package:music_player/presentations/alert_functions.dart';
 import 'package:music_player/constants/palettes/color_palette.dart';
@@ -82,10 +83,7 @@ class ScreenHome extends StatelessWidget {
                   itemCount: playlistNames.length,
                   itemBuilder: (context, index) {
                     String playlistName = playlistNames[index];
-                    BlocProvider.of<ScreenHomeBloc>(context).add(
-                      GetPlaylistLength(),
-                    );
-                    return BlocBuilder<ScreenHomeBloc, ScreenHomeState>(
+                    return BlocBuilder<FavRecentMostBloc, FavRecentMostState>(
                       builder: (context, state) {
                         return CustomPlayList(
                           playlistImage: (index == 0)
@@ -95,10 +93,10 @@ class ScreenHome extends StatelessWidget {
                                   : 'assets/images/new.png',
                           playlistName: playlistName,
                           playlistSongLength: (playlistName == 'Favourites')
-                              ? state.favSonglength
+                              ? state.favSongListlength
                               : (playlistName == 'Recent')
-                                  ? state.recentSonglength
-                                  : state.mostSonglength,
+                                  ? state.recentListLength
+                                  : state.mostListLength,
                         );
                       },
                     );

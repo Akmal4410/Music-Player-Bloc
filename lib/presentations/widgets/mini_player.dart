@@ -74,7 +74,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
     return widget.audioPlayer.builderCurrent(
       builder: (context, playing) {
         final myAudio = find(songAudio, playing.audio.assetAudioPath);
-        Recents.addSongsToRecents(songId: myAudio.metas.id!);
+        Recents.addSongsToRecents(songId: myAudio.metas.id!, context: context);
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),

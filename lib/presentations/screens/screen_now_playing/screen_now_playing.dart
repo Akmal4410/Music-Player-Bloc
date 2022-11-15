@@ -77,7 +77,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
     final screenWidth = MediaQuery.of(context).size.width;
     return widget.audioPlayer.builderCurrent(builder: (context, playing) {
       final myAudio = find(widget.songList, playing.audio.assetAudioPath);
-      Recents.addSongsToRecents(songId: myAudio.metas.id!);
+      Recents.addSongsToRecents(songId: myAudio.metas.id!, context: context);
 
       return Scaffold(
         extendBodyBehindAppBar: true,
@@ -296,7 +296,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                               ///////////////////////////////////
                               await widget.audioPlayer.previous();
                               Recents.addSongsToRecents(
-                                  songId: myAudio.metas.id!);
+                                  songId: myAudio.metas.id!, context: context);
                             },
                           ),
                           CustomIconButton(
@@ -350,7 +350,9 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                               ////////////////////////////////////////////
                               await widget.audioPlayer.next();
                               Recents.addSongsToRecents(
-                                  songId: myAudio.metas.id!);
+                                songId: myAudio.metas.id!,
+                                context: context,
+                              );
                             },
                           )
                         ],
