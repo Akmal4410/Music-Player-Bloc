@@ -2,7 +2,9 @@
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/application/screen_created_playlist/screen_created_playlist_bloc.dart';
 import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/functions/playlist.dart';
@@ -36,6 +38,10 @@ showPlaylistModalSheet({
   required Songs song,
 }) {
   Box<List> playlistBox = getPlaylistBox();
+  final List<dynamic> keys = playlistBox.keys.toList();
+  keys.removeWhere((key) => key == 'Favourites');
+  keys.removeWhere((key) => key == 'Recent');
+  keys.removeWhere((key) => key == 'Most Played');
   return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -67,52 +73,41 @@ showPlaylistModalSheet({
                   shape: const StadiumBorder(),
                 ),
               ),
-              ValueListenableBuilder(
-                  valueListenable: playlistBox.listenable(),
-                  builder: (context, boxSongList, _) {
-                    final List<dynamic> keys = playlistBox.keys.toList();
+              Expanded(
+                child: (keys.isEmpty)
+                    ? const Center(
+                        child: Text("No Playlist Found"),
+                      )
+                    : ListView.builder(
+                        itemCount: keys.length,
+                        itemBuilder: (ctx, index) {
+                          final String playlistKey = keys[index];
 
-                    keys.removeWhere((key) => key == 'Favourites');
-                    keys.removeWhere((key) => key == 'Recent');
-                    keys.removeWhere((key) => key == 'Most Played');
-
-                    return Expanded(
-                      child: (keys.isEmpty)
-                          ? const Center(
-                              child: Text("No Playlist Found"),
-                            )
-                          : ListView.builder(
-                              itemCount: keys.length,
-                              itemBuilder: (ctx, index) {
-                                final String playlistKey = keys[index];
-
-                                return Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2),
-                                  margin: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: ListTile(
-                                    onTap: () async {
-                                      UserPlaylist.addSongToPlaylist(
-                                          context: context,
-                                          songId: song.id,
-                                          playlistName: playlistKey);
-
-                                      Navigator.pop(context);
-                                    },
-                                    leading: const Text(
-                                      '🎧',
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    title: Text(playlistKey),
-                                  ),
-                                );
-                              },
+                          return Container(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            margin: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                    );
-                  })
+                            child: ListTile(
+                              onTap: () async {
+                                UserPlaylist.addSongToPlaylist(
+                                    context: context,
+                                    songId: song.id,
+                                    playlistName: playlistKey);
+
+                                Navigator.pop(context);
+                              },
+                              leading: const Text(
+                                '🎧',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              title: Text(playlistKey),
+                            ),
+                          );
+                        },
+                      ),
+              )
             ],
           ),
         );
@@ -269,53 +264,47 @@ showSongModalSheet({
               ),
             ),
             Expanded(
-              child: ValueListenableBuilder(
-                valueListenable: songBox.listenable(),
-                builder:
-                    (BuildContext context, Box<Songs> boxSongs, Widget? child) {
-                  return ListView.builder(
-                    itemCount: boxSongs.values.length,
-                    itemBuilder: (BuildContext ctx, int index) {
-                      final List<Songs> songsList = boxSongs.values.toList();
-                      final Songs song = songsList[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 3),
-                        child: ListTile(
-                          onTap: () {
-                            UserPlaylist.addSongToPlaylist(
-                              context: context,
-                              songId: song.id,
-                              playlistName: playlistKey,
-                            );
+              child: ListView.builder(
+                itemCount: songBox.values.length,
+                itemBuilder: (BuildContext ctx, int index) {
+                  final List<Songs> songsList = songBox.values.toList();
+                  final Songs song = songsList[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3),
+                    child: ListTile(
+                      onTap: () {
+                        UserPlaylist.addSongToPlaylist(
+                          context: context,
+                          songId: song.id,
+                          playlistName: playlistKey,
+                        );
 
-                            Navigator.pop(context);
-                          },
-                          leading: QueryArtworkWidget(
-                            id: int.parse(song.id),
-                            type: ArtworkType.AUDIO,
-                            artworkBorder: BorderRadius.circular(10),
-                            nullArtworkWidget: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                'assets/images/musicHome.png',
-                                fit: BoxFit.cover,
-                                height: 50,
-                                width: 50,
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            song.title,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
+                        Navigator.pop(context);
+                      },
+                      leading: QueryArtworkWidget(
+                        id: int.parse(song.id),
+                        type: ArtworkType.AUDIO,
+                        artworkBorder: BorderRadius.circular(10),
+                        nullArtworkWidget: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            'assets/images/musicHome.png',
+                            fit: BoxFit.cover,
+                            height: 50,
+                            width: 50,
                           ),
                         ),
-                      );
-                    },
+                      ),
+                      title: Text(
+                        song.title,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),

@@ -1,12 +1,9 @@
 import 'dart:developer';
-
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:music_player/domain/models/db_functions/db_function.dart';
-import 'package:music_player/domain/models/songs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_player/application/screen_home/screen_home_bloc.dart';
 import 'package:music_player/presentations/alert_functions.dart';
-
 import 'package:music_player/constants/palettes/color_palette.dart';
 import 'package:music_player/presentations/screens/screen_search/screen_search.dart';
 import 'package:music_player/presentations/widgets/custom_playlist.dart';
@@ -16,7 +13,7 @@ class ScreenHome extends StatelessWidget {
   ScreenHome({
     super.key,
   });
-
+  final List<String> playlistNames = ['Favourites', 'Recent', 'Most Played'];
   String greeting() {
     var hour = DateTime.now().hour;
     if (hour < 12) {
@@ -31,12 +28,13 @@ class ScreenHome extends StatelessWidget {
     return 'Good Night !';
   }
 
-  Box<Songs> songBox = getSongBox();
-  Box<List> playlistBox = getPlaylistBox();
   AssetsAudioPlayer audioPlayer = AssetsAudioPlayer.withId('0');
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<ScreenHomeBloc>(context).add(const Initailize());
+    });
     final screenHeight = MediaQuery.of(context).size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,29 +77,33 @@ class ScreenHome extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10.0),
                 height: screenHeight * 0.22,
                 width: double.infinity,
-                child: ValueListenableBuilder(
-                    valueListenable: playlistBox.listenable(),
-                    builder: (context, playlistBox, _) {
-                      List playlistKeys = playlistBox.keys.toList();
-                      playlistKeys = ['Favourites', 'Recent', 'Most Played'];
-                      return (playlistKeys.isEmpty)
-                          ? const Text('Nothing Found')
-                          : ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: playlistKeys.length,
-                              itemBuilder: (context, index) {
-                                final playlistName = playlistKeys[index];
-                                return CustomPlayList(
-                                  playlistImage: (index == 0)
-                                      ? 'assets/images/earth.png'
-                                      : (index == 1)
-                                          ? 'assets/images/recent.png'
-                                          : 'assets/images/new.png',
-                                  playlistName: playlistName,
-                                );
-                              },
-                            );
-                    }),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: playlistNames.length,
+                  itemBuilder: (context, index) {
+                    String playlistName = playlistNames[index];
+                    BlocProvider.of<ScreenHomeBloc>(context).add(
+                      GetPlaylistLength(),
+                    );
+                    return BlocBuilder<ScreenHomeBloc, ScreenHomeState>(
+                      builder: (context, state) {
+                        return CustomPlayList(
+                          playlistImage: (index == 0)
+                              ? 'assets/images/earth.png'
+                              : (index == 1)
+                                  ? 'assets/images/recent.png'
+                                  : 'assets/images/new.png',
+                          playlistName: playlistName,
+                          playlistSongLength: (playlistName == 'Favourites')
+                              ? state.favSonglength
+                              : (playlistName == 'Recent')
+                                  ? state.recentSonglength
+                                  : state.mostSonglength,
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
               const Text(
                 'All Songs',
@@ -110,34 +112,34 @@ class ScreenHome extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              ValueListenableBuilder(
-                valueListenable: songBox.listenable(),
-                builder: (BuildContext context, boxSongs, _) {
-                  List<Songs> songList = songBox.values.toList().cast<Songs>();
-                  return (songList.isEmpty)
-                      ? const Text("No Songs Found")
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return SongListTile(
-                              onPressed: () {
-                                log(songList.length.toString());
-                                showPlaylistModalSheet(
-                                  context: context,
-                                  screenHeight: screenHeight,
-                                  song: songList[index],
-                                );
-                              },
-                              songList: songList,
-                              index: index,
-                              audioPlayer: audioPlayer,
-                            );
-                          },
-                          itemCount: songBox.length,
-                        );
+              BlocBuilder<ScreenHomeBloc, ScreenHomeState>(
+                builder: (context, state) {
+                  return Container(
+                    child: state.songList.isEmpty
+                        ? const Text("No Songs Found")
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const ScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return SongListTile(
+                                onPressed: () {
+                                  log(state.songList.length.toString());
+                                  showPlaylistModalSheet(
+                                    context: context,
+                                    screenHeight: screenHeight,
+                                    song: state.songList[index],
+                                  );
+                                },
+                                songList: state.songList,
+                                index: index,
+                                audioPlayer: audioPlayer,
+                              );
+                            },
+                            itemCount: state.songList.length,
+                          ),
+                  );
                 },
-              ),
+              )
             ],
           ),
         ),

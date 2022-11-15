@@ -241,7 +241,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                             ),
                             CustomIconButton(
                               icon: Favourites.isThisFavourite(
-                                  id: myAudio.metas.id!),
+                                  context: context, id: myAudio.metas.id!),
                               onPressed: () {
                                 Favourites.addSongToFavourites(
                                   context: context,
@@ -249,6 +249,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                                 );
                                 setState(() {
                                   Favourites.isThisFavourite(
+                                    context: context,
                                     id: myAudio.metas.id!,
                                   );
                                 });

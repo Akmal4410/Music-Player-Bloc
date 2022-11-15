@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/application/screen_created_playlist/screen_created_playlist_bloc.dart';
 import 'package:music_player/constants/palettes/color_palette.dart';
 import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
@@ -27,6 +29,11 @@ class UserPlaylist {
     } else {
       playlistSongs.add(song);
       await playlistBox.put(playlistName, playlistSongs);
+
+      BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+        GetPlaylistSongs(playlistName: playlistName),
+      );
+
       showPlaylistSnackbar(
           context: context,
           songName: song.title,
@@ -47,10 +54,16 @@ class UserPlaylist {
 
     playlistSongs.removeWhere((element) => element.id == songId);
     await playlistBox.put(playlistName, playlistSongs);
+
+    BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+      GetPlaylistSongs(playlistName: playlistName),
+    );
+
     showPlaylistSnackbar(
-        context: context,
-        songName: song.title,
-        message: 'Deleted from playlist');
+      context: context,
+      songName: song.title,
+      message: 'Deleted from playlist',
+    );
   }
 
   static void showPlaylistSnackbar({

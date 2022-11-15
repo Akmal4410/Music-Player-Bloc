@@ -1,7 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_player/application/screen_created_playlist/screen_created_playlist_bloc.dart';
 import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/alert_functions.dart';
@@ -10,28 +11,22 @@ import 'package:music_player/constants/palettes/color_palette.dart';
 import 'package:music_player/presentations/widgets/search_widget.dart';
 import 'package:music_player/presentations/widgets/song_list_tile.dart';
 
-class ScreenCreatedPlaylist extends StatefulWidget {
-  const ScreenCreatedPlaylist({super.key, required this.playlistName});
+class ScreenCreatedPlaylist extends StatelessWidget {
+  ScreenCreatedPlaylist({
+    super.key,
+    required this.playlistName,
+  });
   final String playlistName;
 
-  @override
-  State<ScreenCreatedPlaylist> createState() => _ScreenCreatedPlaylistState();
-}
-
-class _ScreenCreatedPlaylistState extends State<ScreenCreatedPlaylist> {
-  String? newPlaylistName;
-  @override
-  void initState() {
-    newPlaylistName = widget.playlistName;
-    super.initState();
-  }
-
   AssetsAudioPlayer audioPlayer = AssetsAudioPlayer.withId('0');
-  Box<Songs> songBox = getSongBox();
-  Box<List> playlistBox = getPlaylistBox();
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+        GetPlaylistSongs(playlistName: playlistName),
+      );
+    });
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
@@ -44,77 +39,84 @@ class _ScreenCreatedPlaylistState extends State<ScreenCreatedPlaylist> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          newPlaylistName!,
-          style: const TextStyle(
-            fontSize: 21,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              final List<Songs> playlistSongs =
-                  playlistBox.get(newPlaylistName)!.toList().cast<Songs>();
-              showEditingPlaylistDialoge(
-                context: context,
-                playlistName: newPlaylistName!,
-                playlistSongs: playlistSongs,
-              );
-            },
-            icon: const Icon(
-              Icons.edit,
-              color: kLightBlue,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              showSongModalSheet(
-                context: context,
-                screenHeight: screenHeight,
-                playlistKey: newPlaylistName!,
-              );
-            },
-            icon: const Icon(
-              Icons.add,
-              size: 27,
-              color: kLightBlue,
-            ),
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 20.0, right: 20, top: 10),
-        child: ValueListenableBuilder<Box<List<dynamic>>>(
-          valueListenable: playlistBox.listenable(),
-          builder: (context, boxSongList, _) {
-            final List<Songs> songList =
-                boxSongList.get(newPlaylistName)!.cast<Songs>();
-
-            if (songList.isEmpty) {
-              return const Center(
-                child: Text('No Songs Found'),
-              );
-            }
-            return ListView.builder(
-              itemCount: songList.length,
-              itemBuilder: (ctx, index) {
-                return SongListTile(
-                    icon: Icons.delete_outline_rounded,
-                    onPressed: () {
-                      UserPlaylist.deleteFromPlaylist(
-                        context: context,
-                        songId: songList[index].id,
-                        playlistName: newPlaylistName!,
-                      );
-                    },
-                    songList: songList,
-                    index: index,
-                    audioPlayer: audioPlayer);
-              },
+        title:
+            BlocBuilder<ScreenCreatedPlaylistBloc, ScreenCreatedPlaylistState>(
+          builder: (context, state) {
+            return Text(
+              state.playlistName,
+              style: const TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w600,
+              ),
             );
           },
         ),
+        actions: [
+          BlocBuilder<ScreenCreatedPlaylistBloc, ScreenCreatedPlaylistState>(
+            builder: (context, state) {
+              return IconButton(
+                onPressed: () {
+                  showEditingPlaylistDialoge(
+                    context: context,
+                    playlistName: state.playlistName,
+                    playlistSongs: state.playlistSongs,
+                  );
+                },
+                icon: const Icon(
+                  Icons.edit,
+                  color: kLightBlue,
+                ),
+              );
+            },
+          ),
+          BlocBuilder<ScreenCreatedPlaylistBloc, ScreenCreatedPlaylistState>(
+            builder: (context, state) {
+              return IconButton(
+                onPressed: () {
+                  showSongModalSheet(
+                    context: context,
+                    screenHeight: screenHeight,
+                    playlistKey: state.playlistName,
+                  );
+                },
+                icon: const Icon(
+                  Icons.add,
+                  size: 27,
+                  color: kLightBlue,
+                ),
+              );
+            },
+          )
+        ],
+      ),
+      body: BlocBuilder<ScreenCreatedPlaylistBloc, ScreenCreatedPlaylistState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 20.0, right: 20, top: 10),
+            child: state.playlistSongs.isEmpty
+                ? const Center(
+                    child: Text('No Songs Found'),
+                  )
+                : ListView.builder(
+                    itemCount: state.playlistSongs.length,
+                    itemBuilder: (ctx, index) {
+                      return SongListTile(
+                        icon: Icons.delete_outline_rounded,
+                        onPressed: () {
+                          UserPlaylist.deleteFromPlaylist(
+                            context: context,
+                            songId: state.playlistSongs[index].id,
+                            playlistName: state.playlistName,
+                          );
+                        },
+                        songList: state.playlistSongs,
+                        index: index,
+                        audioPlayer: audioPlayer,
+                      );
+                    },
+                  ),
+          );
+        },
       ),
     );
   }
@@ -173,12 +175,14 @@ class _ScreenCreatedPlaylistState extends State<ScreenCreatedPlaylist> {
                 TextButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final playlistBox = getPlaylistBox();
-                      setState(() {
-                        newPlaylistName = textController.text.trim();
-                      });
-                      await playlistBox.put(newPlaylistName, playlistSongs);
-                      playlistBox.delete(playlistName);
+                      final newPlaylistName = textController.text.trim();
+                      BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+                        RenamePlaylist(
+                          newPlaylistName: newPlaylistName,
+                          oldPlaylistName: playlistName,
+                        ),
+                      );
+
                       Navigator.pop(context);
                     }
                   },

@@ -37,7 +37,8 @@ class _SongListTileState extends State<SongListTile> {
   void initState() {
     super.initState();
     setState(() {
-      Favourites.isThisFavourite(id: widget.songList[widget.index].id);
+      Favourites.isThisFavourite(
+          id: widget.songList[widget.index].id, context: context);
     });
   }
 
@@ -107,12 +108,14 @@ class _SongListTileState extends State<SongListTile> {
               );
               setState(() {
                 Favourites.isThisFavourite(
+                  context: context,
                   id: widget.songList[widget.index].id,
                 );
               });
             },
             icon: Icon(
               Favourites.isThisFavourite(
+                context: context,
                 id: widget.songList[widget.index].id,
               ),
               color: kLightBlue,

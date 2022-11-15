@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/application/screen_created_playlist/screen_created_playlist_bloc.dart';
+import 'package:music_player/application/screen_favourite/screen_favourite_bloc.dart';
+import 'package:music_player/application/screen_home/screen_home_bloc.dart';
 import 'package:music_player/application/screen_navigation/screen_navigation_bloc.dart';
 import 'package:music_player/application/screen_search/screen_search_bloc.dart';
 import 'package:music_player/application/screen_setting/screen_setting_bloc.dart';
@@ -27,8 +30,11 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ScreenNavigationBloc()),
+        BlocProvider(create: (context) => ScreenHomeBloc()),
         BlocProvider(create: (context) => ScreenSettingBloc()),
         BlocProvider(create: (context) => ScreenSearchBloc()),
+        BlocProvider(create: (context) => ScreenCreatedPlaylistBloc()),
+        BlocProvider(create: (context) => ScreenFavouriteBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

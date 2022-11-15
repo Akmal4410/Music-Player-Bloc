@@ -1,10 +1,11 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/application/screen_favourite/screen_favourite_bloc.dart';
 import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/alert_functions.dart';
-
 import 'package:music_player/constants/palettes/color_palette.dart';
 import 'package:music_player/presentations/widgets/song_list_tile.dart';
 
@@ -19,6 +20,10 @@ class ScreenFavourites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<ScreenFavouriteBloc>(context)
+          .add(Initial(playlistName: playlistName));
+    });
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
@@ -50,36 +55,33 @@ class ScreenFavourites extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 20.0, right: 20, top: 10),
-        child: ValueListenableBuilder(
-          valueListenable: playlistBox.listenable(),
-          builder: (BuildContext context, Box<List> value, Widget? child) {
-            List<Songs> songList =
-                playlistBox.get(playlistName)!.toList().cast<Songs>();
-            return (songList.isEmpty)
+      body: BlocBuilder<ScreenFavouriteBloc, ScreenFavouriteState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 20.0, right: 20, top: 10),
+            child: state.favSonglist.isEmpty
                 ? const Center(
-                    child: Text('No Songs Found'),
+                    child: Text('The List is Empty'),
                   )
                 : ListView.builder(
-                    itemCount: songList.length,
+                    itemCount: state.favSonglist.length,
                     itemBuilder: (context, index) {
                       return SongListTile(
                         onPressed: () {
                           showPlaylistModalSheet(
                             context: context,
                             screenHeight: screenHeight,
-                            song: songList[index],
+                            song: state.favSonglist[index],
                           );
                         },
-                        songList: songList,
+                        songList: state.favSonglist,
                         index: index,
                         audioPlayer: audioPlayer,
                       );
                     },
-                  );
-          },
-        ),
+                  ),
+          );
+        },
       ),
     );
   }

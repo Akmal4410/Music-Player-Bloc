@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:music_player/constants/palettes/color_palette.dart';
-import 'package:music_player/domain/models/db_functions/db_function.dart';
-import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/screens/screen_created_playlist/screen_created_playlist.dart';
 import 'package:music_player/presentations/screens/screen_favourite/screen_favourite.dart';
 
@@ -11,17 +8,18 @@ class CustomPlayList extends StatelessWidget {
     Key? key,
     required this.playlistImage,
     required this.playlistName,
+    required this.playlistSongLength,
   }) : super(key: key);
 
   final String playlistImage;
   final String playlistName;
+  final int playlistSongLength;
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final List<Songs> songList =
-        getPlaylistBox().get(playlistName)!.toList().cast<Songs>();
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -82,12 +80,12 @@ class CustomPlayList extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  ' ${songList.length} Songs',
+                  ' $playlistSongLength Songs',
                   style: const TextStyle(
                     color: kLightBlue,
                     fontSize: 13,
                   ),
-                )
+                ),
               ],
             ),
           ),

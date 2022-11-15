@@ -51,18 +51,18 @@ class ScreenPlaylist extends StatelessWidget {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: const [
-                    CustomPlayList(
-                      playlistImage: 'assets/images/favourites.png',
-                      playlistName: 'Favourites',
-                    ),
-                    CustomPlayList(
-                      playlistImage: 'assets/images/recent.png',
-                      playlistName: 'Recent',
-                    ),
-                    CustomPlayList(
-                      playlistImage: 'assets/images/mostPlayed.png',
-                      playlistName: 'Most Played',
-                    ),
+                    // CustomPlayList(
+                    //   playlistImage: 'assets/images/favourites.png',
+                    //   playlistName: 'Favourites',
+                    // ),
+                    // CustomPlayList(
+                    //   playlistImage: 'assets/images/recent.png',
+                    //   playlistName: 'Recent',
+                    // ),
+                    // CustomPlayList(
+                    //   playlistImage: 'assets/images/mostPlayed.png',
+                    //   playlistName: 'Most Played',
+                    // ),
                   ],
                 ),
               ),
