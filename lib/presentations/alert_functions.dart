@@ -37,11 +37,9 @@ showPlaylistModalSheet({
   required double screenHeight,
   required Songs song,
 }) {
-  Box<List> playlistBox = getPlaylistBox();
-  final List<dynamic> keys = playlistBox.keys.toList();
-  keys.removeWhere((key) => key == 'Favourites');
-  keys.removeWhere((key) => key == 'Recent');
-  keys.removeWhere((key) => key == 'Most Played');
+  BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+    const GetPlaylistListNames(),
+  );
   return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -73,40 +71,47 @@ showPlaylistModalSheet({
                   shape: const StadiumBorder(),
                 ),
               ),
-              Expanded(
-                child: (keys.isEmpty)
-                    ? const Center(
-                        child: Text("No Playlist Found"),
-                      )
-                    : ListView.builder(
-                        itemCount: keys.length,
-                        itemBuilder: (ctx, index) {
-                          final String playlistKey = keys[index];
+              BlocBuilder<ScreenCreatedPlaylistBloc,
+                  ScreenCreatedPlaylistState>(
+                builder: (context, state) {
+                  return Expanded(
+                    child: (state.playlistListNames.isEmpty)
+                        ? const Center(
+                            child: Text("No Playlist Found"),
+                          )
+                        : ListView.builder(
+                            itemCount: state.playlistListNames.length,
+                            itemBuilder: (ctx, index) {
+                              final String playlistKey =
+                                  state.playlistListNames[index];
 
-                          return Container(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            margin: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: ListTile(
-                              onTap: () async {
-                                UserPlaylist.addSongToPlaylist(
-                                    context: context,
-                                    songId: song.id,
-                                    playlistName: playlistKey);
+                              return Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2),
+                                margin: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: ListTile(
+                                  onTap: () async {
+                                    UserPlaylist.addSongToPlaylist(
+                                        context: context,
+                                        songId: song.id,
+                                        playlistName: playlistKey);
 
-                                Navigator.pop(context);
-                              },
-                              leading: const Text(
-                                '🎧',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              title: Text(playlistKey),
-                            ),
-                          );
-                        },
-                      ),
+                                    Navigator.pop(context);
+                                  },
+                                  leading: const Text(
+                                    '🎧',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  title: Text(playlistKey),
+                                ),
+                              );
+                            },
+                          ),
+                  );
+                },
               )
             ],
           ),
@@ -125,6 +130,9 @@ showCreatingPlaylistDialoge({required BuildContext context}) {
       return;
     }
     await playlistBox.put(playlistName, songList);
+    BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+      const GetPlaylistListNames(),
+    );
   }
 
   return showDialog(

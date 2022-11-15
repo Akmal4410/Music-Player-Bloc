@@ -9,10 +9,15 @@ class ScreenCreatedPlaylistState with _$ScreenCreatedPlaylistState {
   }) = _ScreenCreatedPlaylistState;
 
   factory ScreenCreatedPlaylistState.initial() {
-    return const ScreenCreatedPlaylistState(
+    Box<List> playlistBox = getPlaylistBox();
+    final List<dynamic> keys = playlistBox.keys.toList();
+    keys.removeWhere((key) => key == 'Favourites');
+    keys.removeWhere((key) => key == 'Recent');
+    keys.removeWhere((key) => key == 'Most Played');
+    return ScreenCreatedPlaylistState(
       playlistName: '',
       playlistSongs: [],
-      playlistListNames: [],
+      playlistListNames: keys,
     );
   }
 }

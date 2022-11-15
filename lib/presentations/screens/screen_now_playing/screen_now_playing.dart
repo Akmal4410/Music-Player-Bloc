@@ -239,22 +239,22 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                                 repeatButtonPressed();
                               },
                             ),
-                            CustomIconButton(
-                              icon: Favourites.isThisFavourite(
-                                  context: context, id: myAudio.metas.id!),
-                              onPressed: () {
-                                Favourites.addSongToFavourites(
-                                  context: context,
-                                  id: myAudio.metas.id!,
-                                );
-                                setState(() {
-                                  Favourites.isThisFavourite(
-                                    context: context,
-                                    id: myAudio.metas.id!,
-                                  );
-                                });
-                              },
-                            )
+                            // CustomIconButton(
+                            //   icon: Favourites.isThisFavourite(
+                            //       context: context, id: myAudio.metas.id!),
+                            //   onPressed: () {
+                            //     Favourites.addSongToFavourites(
+                            //       context: context,
+                            //       id: myAudio.metas.id!,
+                            //     );
+                            //     setState(() {
+                            //       Favourites.isThisFavourite(
+                            //         context: context,
+                            //         id: myAudio.metas.id!,
+                            //       );
+                            //     });
+                            //   },
+                            // )
                           ],
                         ),
                       ),

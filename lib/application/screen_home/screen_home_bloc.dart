@@ -14,7 +14,7 @@ class ScreenHomeBloc extends Bloc<ScreenHomeEvent, ScreenHomeState> {
     on<Initailize>((event, emit) {
       emit(ScreenHomeState(
         songList: state.songList,
-        playlistName: state.playlistName,
+        playlistNames: state.playlistNames,
         favSonglength: state.favSonglength,
         recentSonglength: state.recentSonglength,
         mostSonglength: state.mostSonglength,
@@ -24,7 +24,7 @@ class ScreenHomeBloc extends Bloc<ScreenHomeEvent, ScreenHomeState> {
     on<GetPlaylistLength>((event, emit) {
       return emit(ScreenHomeState(
         songList: state.songList,
-        playlistName: state.playlistName,
+        playlistNames: state.playlistNames,
         favSonglength: playlistBox.get('Favourites')!.toList().length,
         recentSonglength: playlistBox.get('Recent')!.toList().length,
         mostSonglength: playlistBox.get('Most Played')!.toList().length,

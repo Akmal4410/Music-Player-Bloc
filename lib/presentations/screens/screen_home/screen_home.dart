@@ -139,7 +139,7 @@ class ScreenHome extends StatelessWidget {
                           ),
                   );
                 },
-              )
+              ),
             ],
           ),
         ),

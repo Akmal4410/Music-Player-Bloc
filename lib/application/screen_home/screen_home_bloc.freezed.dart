@@ -281,7 +281,7 @@ abstract class GetPlaylistLength implements ScreenHomeEvent {
 /// @nodoc
 mixin _$ScreenHomeState {
   List<Songs> get songList => throw _privateConstructorUsedError;
-  List<dynamic> get playlistName => throw _privateConstructorUsedError;
+  List<dynamic> get playlistNames => throw _privateConstructorUsedError;
   int get favSonglength => throw _privateConstructorUsedError;
   int get recentSonglength => throw _privateConstructorUsedError;
   int get mostSonglength => throw _privateConstructorUsedError;
@@ -299,7 +299,7 @@ abstract class $ScreenHomeStateCopyWith<$Res> {
   @useResult
   $Res call(
       {List<Songs> songList,
-      List<dynamic> playlistName,
+      List<dynamic> playlistNames,
       int favSonglength,
       int recentSonglength,
       int mostSonglength});
@@ -319,7 +319,7 @@ class _$ScreenHomeStateCopyWithImpl<$Res, $Val extends ScreenHomeState>
   @override
   $Res call({
     Object? songList = null,
-    Object? playlistName = null,
+    Object? playlistNames = null,
     Object? favSonglength = null,
     Object? recentSonglength = null,
     Object? mostSonglength = null,
@@ -329,9 +329,9 @@ class _$ScreenHomeStateCopyWithImpl<$Res, $Val extends ScreenHomeState>
           ? _value.songList
           : songList // ignore: cast_nullable_to_non_nullable
               as List<Songs>,
-      playlistName: null == playlistName
-          ? _value.playlistName
-          : playlistName // ignore: cast_nullable_to_non_nullable
+      playlistNames: null == playlistNames
+          ? _value.playlistNames
+          : playlistNames // ignore: cast_nullable_to_non_nullable
               as List<dynamic>,
       favSonglength: null == favSonglength
           ? _value.favSonglength
@@ -359,7 +359,7 @@ abstract class _$$_ScreenHomeStateCopyWith<$Res>
   @useResult
   $Res call(
       {List<Songs> songList,
-      List<dynamic> playlistName,
+      List<dynamic> playlistNames,
       int favSonglength,
       int recentSonglength,
       int mostSonglength});
@@ -377,7 +377,7 @@ class __$$_ScreenHomeStateCopyWithImpl<$Res>
   @override
   $Res call({
     Object? songList = null,
-    Object? playlistName = null,
+    Object? playlistNames = null,
     Object? favSonglength = null,
     Object? recentSonglength = null,
     Object? mostSonglength = null,
@@ -387,9 +387,9 @@ class __$$_ScreenHomeStateCopyWithImpl<$Res>
           ? _value._songList
           : songList // ignore: cast_nullable_to_non_nullable
               as List<Songs>,
-      playlistName: null == playlistName
-          ? _value._playlistName
-          : playlistName // ignore: cast_nullable_to_non_nullable
+      playlistNames: null == playlistNames
+          ? _value._playlistNames
+          : playlistNames // ignore: cast_nullable_to_non_nullable
               as List<dynamic>,
       favSonglength: null == favSonglength
           ? _value.favSonglength
@@ -412,12 +412,12 @@ class __$$_ScreenHomeStateCopyWithImpl<$Res>
 class _$_ScreenHomeState implements _ScreenHomeState {
   const _$_ScreenHomeState(
       {required final List<Songs> songList,
-      required final List<dynamic> playlistName,
+      required final List<dynamic> playlistNames,
       required this.favSonglength,
       required this.recentSonglength,
       required this.mostSonglength})
       : _songList = songList,
-        _playlistName = playlistName;
+        _playlistNames = playlistNames;
 
   final List<Songs> _songList;
   @override
@@ -426,11 +426,11 @@ class _$_ScreenHomeState implements _ScreenHomeState {
     return EqualUnmodifiableListView(_songList);
   }
 
-  final List<dynamic> _playlistName;
+  final List<dynamic> _playlistNames;
   @override
-  List<dynamic> get playlistName {
+  List<dynamic> get playlistNames {
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_playlistName);
+    return EqualUnmodifiableListView(_playlistNames);
   }
 
   @override
@@ -442,7 +442,7 @@ class _$_ScreenHomeState implements _ScreenHomeState {
 
   @override
   String toString() {
-    return 'ScreenHomeState(songList: $songList, playlistName: $playlistName, favSonglength: $favSonglength, recentSonglength: $recentSonglength, mostSonglength: $mostSonglength)';
+    return 'ScreenHomeState(songList: $songList, playlistNames: $playlistNames, favSonglength: $favSonglength, recentSonglength: $recentSonglength, mostSonglength: $mostSonglength)';
   }
 
   @override
@@ -452,7 +452,7 @@ class _$_ScreenHomeState implements _ScreenHomeState {
             other is _$_ScreenHomeState &&
             const DeepCollectionEquality().equals(other._songList, _songList) &&
             const DeepCollectionEquality()
-                .equals(other._playlistName, _playlistName) &&
+                .equals(other._playlistNames, _playlistNames) &&
             (identical(other.favSonglength, favSonglength) ||
                 other.favSonglength == favSonglength) &&
             (identical(other.recentSonglength, recentSonglength) ||
@@ -465,7 +465,7 @@ class _$_ScreenHomeState implements _ScreenHomeState {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_songList),
-      const DeepCollectionEquality().hash(_playlistName),
+      const DeepCollectionEquality().hash(_playlistNames),
       favSonglength,
       recentSonglength,
       mostSonglength);
@@ -480,7 +480,7 @@ class _$_ScreenHomeState implements _ScreenHomeState {
 abstract class _ScreenHomeState implements ScreenHomeState {
   const factory _ScreenHomeState(
       {required final List<Songs> songList,
-      required final List<dynamic> playlistName,
+      required final List<dynamic> playlistNames,
       required final int favSonglength,
       required final int recentSonglength,
       required final int mostSonglength}) = _$_ScreenHomeState;
@@ -488,7 +488,7 @@ abstract class _ScreenHomeState implements ScreenHomeState {
   @override
   List<Songs> get songList;
   @override
-  List<dynamic> get playlistName;
+  List<dynamic> get playlistNames;
   @override
   int get favSonglength;
   @override

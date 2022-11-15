@@ -1,7 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:music_player/domain/models/db_functions/db_function.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_player/application/fav_recent_most/fav_recent_most_bloc.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/alert_functions.dart';
 import 'package:music_player/functions/favourites.dart';
@@ -9,7 +9,7 @@ import 'package:music_player/functions/recents.dart';
 import 'package:music_player/constants/palettes/color_palette.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class SongListTile extends StatefulWidget {
+class SongListTile extends StatelessWidget {
   const SongListTile({
     Key? key,
     this.icon = Icons.playlist_add,
@@ -26,38 +26,22 @@ class SongListTile extends StatefulWidget {
   final List<Songs> songList;
 
   @override
-  State<SongListTile> createState() => _SongListTileState();
-}
-
-class _SongListTileState extends State<SongListTile> {
-  Box<Songs> songBox = getSongBox();
-  Box<List> playlistBox = getPlaylistBox();
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      Favourites.isThisFavourite(
-          id: widget.songList[widget.index].id, context: context);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
     return ListTile(
       onTap: () {
-        Recents.addSongsToRecents(songId: widget.songList[widget.index].id);
+        Recents.addSongsToRecents(songId: songList[index].id);
         showMiniPlayer(
           context: context,
-          index: widget.index,
-          songList: widget.songList,
-          audioPlayer: widget.audioPlayer,
+          index: index,
+          songList: songList,
+          audioPlayer: audioPlayer,
         );
       },
       contentPadding: const EdgeInsets.all(0),
       leading: QueryArtworkWidget(
         artworkBorder: BorderRadius.circular(10),
-        id: int.parse(widget.songList[widget.index].id),
+        id: int.parse(songList[index].id),
         type: ArtworkType.AUDIO,
         nullArtworkWidget: ClipRRect(
           borderRadius: BorderRadius.circular(10),
@@ -70,7 +54,7 @@ class _SongListTileState extends State<SongListTile> {
         ),
       ),
       title: Text(
-        widget.songList[widget.index].title,
+        songList[index].title,
         overflow: TextOverflow.ellipsis,
         maxLines: 1,
         style: const TextStyle(
@@ -79,9 +63,9 @@ class _SongListTileState extends State<SongListTile> {
         ),
       ),
       subtitle: Text(
-        widget.songList[widget.index].artist == '<unknown>'
+        songList[index].artist == '<unknown>'
             ? 'Unknown'
-            : widget.songList[widget.index].artist,
+            : songList[index].artist,
         overflow: TextOverflow.ellipsis,
         maxLines: 1,
         style: const TextStyle(
@@ -93,34 +77,36 @@ class _SongListTileState extends State<SongListTile> {
         children: [
           IconButton(
             padding: const EdgeInsets.only(left: 0),
-            onPressed: widget.onPressed,
+            onPressed: onPressed,
             icon: Icon(
-              widget.icon,
+              icon,
               color: kLightBlue,
               size: 27,
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Favourites.addSongToFavourites(
-                context: context,
-                id: widget.songList[widget.index].id,
+          BlocBuilder<FavRecentMostBloc, FavRecentMostState>(
+            builder: (context, state) {
+              return IconButton(
+                onPressed: () {
+                  Favourites.addSongToFavourites(
+                    context: context,
+                    id: songList[index].id,
+                  );
+                  BlocProvider.of<FavRecentMostBloc>(context).add(
+                    const GetSongsList(),
+                  );
+                },
+                icon: Icon(
+                  state.favSongList
+                          .where((song) => song.id == songList[index].id)
+                          .isEmpty
+                      ? Icons.favorite_outline_rounded
+                      : Icons.favorite_rounded,
+                  color: kLightBlue,
+                  size: 25,
+                ),
               );
-              setState(() {
-                Favourites.isThisFavourite(
-                  context: context,
-                  id: widget.songList[widget.index].id,
-                );
-              });
             },
-            icon: Icon(
-              Favourites.isThisFavourite(
-                context: context,
-                id: widget.songList[widget.index].id,
-              ),
-              color: kLightBlue,
-              size: 25,
-            ),
           )
         ],
       ),

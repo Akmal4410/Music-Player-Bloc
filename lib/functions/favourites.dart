@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:music_player/application/screen_favourite/screen_favourite_bloc.dart';
-
 import 'package:music_player/constants/palettes/color_palette.dart';
 import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
@@ -14,21 +11,18 @@ class Favourites {
   static addSongToFavourites(
       {required BuildContext context, required String id}) async {
     final List<Songs> allSongs = songBox.values.toList().cast();
-
     final List<Songs> favSongList =
         playlistBox.get('Favourites')!.toList().cast<Songs>();
-
     final Songs favSong = allSongs.firstWhere((song) => song.id.contains(id));
 
     if (favSongList.where((song) => song.id == favSong.id).isEmpty) {
       favSongList.add(favSong);
       await playlistBox.put('Favourites', favSongList);
       showFavouritesSnackBar(
-          context: context,
-          songName: favSong.title,
-          message: 'Added to Favourites');
-      BlocProvider.of<ScreenFavouriteBloc>(context)
-          .add(Initial(playlistName: "Favourites"));
+        context: context,
+        songName: favSong.title,
+        message: 'Added to Favourites',
+      );
     } else {
       favSongList.removeWhere((songs) => songs.id == favSong.id);
       await playlistBox.put('Favourites', favSongList);
@@ -36,32 +30,7 @@ class Favourites {
           context: context,
           songName: favSong.title,
           message: 'Removed from Favourites');
-      BlocProvider.of<ScreenFavouriteBloc>(context)
-          .add(Initial(playlistName: "Favourites"));
     }
-  }
-
-  static IconData isThisFavourite(
-      {required String id, required BuildContext context}) {
-    final List<Songs> allSongs = songBox.values.toList().cast();
-    List<Songs> favSongList =
-        playlistBox.get('Favourites')!.toList().cast<Songs>();
-
-    Songs favSong = allSongs.firstWhere((song) => song.id.contains(id));
-
-    if (favSongList.where((song) => song.id == favSong.id).isEmpty) {
-      BlocProvider.of<ScreenFavouriteBloc>(context)
-          .add(Initial(playlistName: "Favourites"));
-      return Icons.favorite_outline_rounded;
-    } else {
-      BlocProvider.of<ScreenFavouriteBloc>(context)
-          .add(Initial(playlistName: "Favourites"));
-      return Icons.favorite_rounded;
-    }
-
-    // return favSongList.where((song) => song.id == favSong.id).isEmpty
-    //     ? Icons.favorite_outline_rounded
-    //     : Icons.favorite_rounded;
   }
 
   static showFavouritesSnackBar(

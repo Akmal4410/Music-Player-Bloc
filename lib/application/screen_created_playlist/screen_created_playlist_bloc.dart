@@ -37,11 +37,15 @@ class ScreenCreatedPlaylistBloc
     });
 
     on<GetPlaylistListNames>((event, emit) {
+      final List<dynamic> keys = playlistBox.keys.toList();
+      keys.removeWhere((key) => key == 'Favourites');
+      keys.removeWhere((key) => key == 'Recent');
+      keys.removeWhere((key) => key == 'Most Played');
       emit(
         ScreenCreatedPlaylistState(
           playlistName: state.playlistName,
           playlistSongs: state.playlistSongs,
-          playlistListNames: playlistBox.keys.toList(),
+          playlistListNames: keys,
         ),
       );
     });
