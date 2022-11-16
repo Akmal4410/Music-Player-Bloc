@@ -183,6 +183,10 @@ class ScreenCreatedPlaylist extends StatelessWidget {
                         ),
                       );
 
+                      BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+                        const GetPlaylistListNames(),
+                      );
+
                       Navigator.pop(context);
                     }
                   },

@@ -86,18 +86,17 @@ class ScreenHome extends StatelessWidget {
                     return BlocBuilder<FavRecentMostBloc, FavRecentMostState>(
                       builder: (context, state) {
                         return CustomPlayList(
-                          playlistImage: (index == 0)
-                              ? 'assets/images/earth.png'
-                              : (index == 1)
-                                  ? 'assets/images/recent.png'
-                                  : 'assets/images/new.png',
-                          playlistName: playlistName,
-                          playlistSongLength: (playlistName == 'Favourites')
-                              ? state.favSongListlength
-                              : (playlistName == 'Recent')
-                                  ? state.recentListLength
-                                  : state.mostListLength,
-                        );
+                            playlistImage: (index == 0)
+                                ? 'assets/images/earth.png'
+                                : (index == 1)
+                                    ? 'assets/images/recent.png'
+                                    : 'assets/images/new.png',
+                            playlistName: playlistName,
+                            playlistSongLength: (playlistName == 'Favourites')
+                                ? state.favSongListlength
+                                : (playlistName == 'Recent')
+                                    ? state.recentListLength
+                                    : state.mostListLength);
                       },
                     );
                   },

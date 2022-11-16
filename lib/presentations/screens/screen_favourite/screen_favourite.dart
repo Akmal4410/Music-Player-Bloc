@@ -92,8 +92,6 @@ class ScreenFavourites extends StatelessWidget {
   }
 
   showClearAlert({required BuildContext context, required String key}) {
-    final playlistBox = getPlaylistBox();
-
     return showDialog(
         context: context,
         builder: (ctx) {
@@ -126,9 +124,7 @@ class ScreenFavourites extends StatelessWidget {
               TextButton(
                 onPressed: () async {
                   List<Songs> dbSongs = songBox.values.toList().cast<Songs>();
-
                   await songBox.clear();
-
                   for (var item in dbSongs) {
                     Songs song = Songs(
                       id: item.id,
@@ -140,6 +136,12 @@ class ScreenFavourites extends StatelessWidget {
                     await songBox.put(song.id, song);
                   }
                   await playlistBox.put(playlistName, []);
+                  BlocProvider.of<FavRecentMostBloc>(context).add(
+                    const GetPlaylistLength(),
+                  );
+                  BlocProvider.of<FavRecentMostBloc>(context).add(
+                    const GetSongsList(),
+                  );
                   Navigator.pop(ctx);
                 },
                 child: const Text(

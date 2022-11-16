@@ -229,6 +229,9 @@ showPlaylistDeleteAlert({required BuildContext context, required String key}) {
               onPressed: () async {
                 await playlistBox.delete(key);
                 Navigator.pop(ctx);
+                BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+                  const GetPlaylistListNames(),
+                );
               },
               child: const Text(
                 'OK',

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_player/application/fav_recent_most/fav_recent_most_bloc.dart';
+import 'package:music_player/application/screen_created_playlist/screen_created_playlist_bloc.dart';
 import 'package:music_player/domain/models/db_functions/db_function.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/alert_functions.dart';
@@ -9,12 +12,16 @@ import 'package:music_player/presentations/widgets/created_playlist.dart';
 import 'package:music_player/presentations/widgets/custom_playlist.dart';
 
 class ScreenPlaylist extends StatelessWidget {
-  ScreenPlaylist({super.key});
-
   Box<List> playlistBox = getPlaylistBox();
+  ScreenPlaylist({super.key});
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+        const GetPlaylistListNames(),
+      );
+    });
     final screenHeight = MediaQuery.of(context).size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,22 +55,29 @@ class ScreenPlaylist extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 10.0),
                 height: screenHeight * 0.22,
                 width: double.infinity,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: const [
-                    // CustomPlayList(
-                    //   playlistImage: 'assets/images/favourites.png',
-                    //   playlistName: 'Favourites',
-                    // ),
-                    // CustomPlayList(
-                    //   playlistImage: 'assets/images/recent.png',
-                    //   playlistName: 'Recent',
-                    // ),
-                    // CustomPlayList(
-                    //   playlistImage: 'assets/images/mostPlayed.png',
-                    //   playlistName: 'Most Played',
-                    // ),
-                  ],
+                child: BlocBuilder<FavRecentMostBloc, FavRecentMostState>(
+                  builder: (context, state) {
+                    return ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        CustomPlayList(
+                          playlistImage: 'assets/images/favourites.png',
+                          playlistName: 'Favourites',
+                          playlistSongLength: state.favSongListlength,
+                        ),
+                        CustomPlayList(
+                          playlistImage: 'assets/images/recent.png',
+                          playlistName: 'Recent',
+                          playlistSongLength: state.recentListLength,
+                        ),
+                        CustomPlayList(
+                          playlistImage: 'assets/images/mostPlayed.png',
+                          playlistName: 'Most Played',
+                          playlistSongLength: state.mostListLength,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               const Text(
@@ -74,19 +88,18 @@ class ScreenPlaylist extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 15),
-              ValueListenableBuilder(
-                valueListenable: playlistBox.listenable(),
-                builder: (context, value, child) {
-                  List keys = playlistBox.keys.toList();
-                  keys.removeWhere((key) => key == 'Favourites');
-                  keys.removeWhere((key) => key == 'Recent');
-                  keys.removeWhere((key) => key == 'Most Played');
-                  return (keys.isEmpty)
+              BlocBuilder<ScreenCreatedPlaylistBloc,
+                  ScreenCreatedPlaylistState>(
+                builder: (context, state) {
+                  BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+                    const GetPlaylistListNames(),
+                  );
+                  return state.playlistListNames.isEmpty
                       ? const Center(
-                          child: Text('No Created Playlist..'),
+                          child: Text('The List is Empty'),
                         )
                       : GridView.builder(
-                          itemCount: keys.length,
+                          itemCount: state.playlistListNames.length,
                           shrinkWrap: true,
                           physics: const ScrollPhysics(),
                           gridDelegate:
@@ -97,7 +110,8 @@ class ScreenPlaylist extends StatelessWidget {
                             childAspectRatio: 1.25,
                           ),
                           itemBuilder: (context, index) {
-                            final String playlistName = keys[index];
+                            final String playlistName =
+                                state.playlistListNames[index];
 
                             final List<Songs> songList = playlistBox
                                 .get(playlistName)!
