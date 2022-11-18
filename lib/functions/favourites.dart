@@ -10,7 +10,7 @@ class Favourites {
 
   static addSongToFavourites(
       {required BuildContext context, required String id}) async {
-    final List<Songs> allSongs = songBox.values.toList().cast();
+    final List<Songs> allSongs = songBox.values.toList().cast<Songs>();
     final List<Songs> favSongList =
         playlistBox.get('Favourites')!.toList().cast<Songs>();
     final Songs favSong = allSongs.firstWhere((song) => song.id.contains(id));

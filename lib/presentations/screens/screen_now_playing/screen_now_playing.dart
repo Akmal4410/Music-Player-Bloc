@@ -1,8 +1,12 @@
+import 'dart:developer';
 import 'dart:ui';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_player/application/fav_recent_most/fav_recent_most_bloc.dart';
 import 'package:music_player/domain/models/songs.dart';
+import 'package:music_player/functions/favourites.dart';
 import 'package:music_player/presentations/alert_functions.dart';
 import 'package:music_player/functions/recents.dart';
 import 'package:music_player/domain/lyrics/lyrics_api.dart';
@@ -11,8 +15,8 @@ import 'package:music_player/presentations/widgets/custom_icon_button.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:text_scroll/text_scroll.dart';
 
-class ScreenNowPlaying extends StatefulWidget {
-  const ScreenNowPlaying({
+class ScreenNowPlaying extends StatelessWidget {
+  ScreenNowPlaying({
     super.key,
     required this.songList,
     required this.index,
@@ -25,44 +29,25 @@ class ScreenNowPlaying extends StatefulWidget {
   final String id;
   final AssetsAudioPlayer audioPlayer;
 
-  @override
-  State<ScreenNowPlaying> createState() => _ScreenNowPlayingState();
-}
-
-class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
   String newLyrics = 'Tap the button to get the Lyrics';
   PageController? pageController;
-  @override
-  void initState() {
-    super.initState();
 
+  void initState() {
     pageController = PageController(
       viewportFraction: 1,
       keepPage: true,
-      initialPage: widget.index,
+      initialPage: index,
     );
   }
 
-  bool isLoop = true;
   bool isShuffle = true;
 
-  void shuffleButtonPressed() {
-    setState(() {
-      widget.audioPlayer.toggleShuffle();
-      isShuffle = !isShuffle;
-    });
-  }
-
-  void repeatButtonPressed() {
-    if (isLoop == true) {
-      widget.audioPlayer.setLoopMode(LoopMode.single);
-    } else {
-      widget.audioPlayer.setLoopMode(LoopMode.playlist);
-    }
-    setState(() {
-      isLoop = !isLoop;
-    });
-  }
+  // void shuffleButtonPressed() {
+  //   setState(() {
+  //     widget.audioPlayer.toggleShuffle();
+  //     isShuffle = !isShuffle;
+  //   });
+  // }
 
   Audio find(List<Audio> source, String fromPath) {
     return source.firstWhere((element) {
@@ -72,10 +57,11 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
 
   @override
   Widget build(BuildContext context) {
+    initState();
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    return widget.audioPlayer.builderCurrent(builder: (context, playing) {
-      final myAudio = find(widget.songList, playing.audio.assetAudioPath);
+    return audioPlayer.builderCurrent(builder: (context, playing) {
+      final myAudio = find(songList, playing.audio.assetAudioPath);
       Recents.addSongsToRecents(songId: myAudio.metas.id!, context: context);
 
       return Scaffold(
@@ -115,13 +101,11 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
         ),
         body: PageView.builder(
           onPageChanged: (newValue) {
-            widget.audioPlayer.playlistPlayAtIndex(newValue);
-
-            // pageController!.page!.toInt()
+            audioPlayer.playlistPlayAtIndex(newValue);
           },
           controller: pageController,
           scrollDirection: Axis.vertical,
-          itemCount: widget.songList.length,
+          itemCount: songList.length,
           itemBuilder: (context, index) {
             return Stack(
               children: [
@@ -178,7 +162,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                           height: 30,
                           child: Center(
                             child: TextScroll(
-                              widget.audioPlayer.getCurrentAudioTitle,
+                              audioPlayer.getCurrentAudioTitle,
                               textAlign: TextAlign.center,
                               velocity: const Velocity(
                                   pixelsPerSecond: Offset(45, 0)),
@@ -191,10 +175,9 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                       ),
                       Center(
                         child: Text(
-                          widget.audioPlayer.getCurrentAudioArtist ==
-                                  '<unknown>'
+                          audioPlayer.getCurrentAudioArtist == '<unknown>'
                               ? 'Unknown'
-                              : widget.audioPlayer.getCurrentAudioArtist,
+                              : audioPlayer.getCurrentAudioArtist,
                           maxLines: 1,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(color: kGrey, fontSize: 13),
@@ -214,7 +197,6 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                                   artist: myAudio.metas.artist!,
                                   uri: myAudio.path,
                                 );
-
                                 showPlaylistModalSheet(
                                   context: context,
                                   screenHeight: screenHeight,
@@ -222,42 +204,70 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                                 );
                               },
                             ),
-                            CustomIconButton(
-                              icon: (isShuffle == true)
-                                  ? Icons.shuffle
-                                  : Icons.arrow_forward,
-                              onPressed: () {
-                                shuffleButtonPressed();
+                            PlayerBuilder.realtimePlayingInfos(
+                                player: audioPlayer,
+                                builder: (context, realTimeInfos) {
+                                  return CustomIconButton(
+                                    icon: (audioPlayer.isShuffling.value)
+                                        ? Icons.arrow_forward
+                                        : Icons.shuffle,
+                                    onPressed: () {
+                                      audioPlayer.toggleShuffle();
+                                      log('message');
+                                    },
+                                  );
+                                }),
+                            PlayerBuilder.loopMode(
+                                player: audioPlayer,
+                                builder: (context, loopMode) {
+                                  return CustomIconButton(
+                                    icon: (loopMode == LoopMode.playlist)
+                                        ? Icons.repeat
+                                        : Icons.repeat_one,
+                                    onPressed: () {
+                                      if (loopMode == LoopMode.playlist) {
+                                        audioPlayer
+                                            .setLoopMode(LoopMode.single);
+                                      } else {
+                                        audioPlayer
+                                            .setLoopMode(LoopMode.playlist);
+                                      }
+                                    },
+                                  );
+                                }),
+                            BlocBuilder<FavRecentMostBloc, FavRecentMostState>(
+                              builder: (context, state) {
+                                return CustomIconButton(
+                                  icon: state.favSongList
+                                          .where((song) =>
+                                              song.id ==
+                                              songList[index].metas.id)
+                                          .isEmpty
+                                      ? Icons.favorite_outline_rounded
+                                      : Icons.favorite_rounded,
+                                  onPressed: () {
+                                    Favourites.addSongToFavourites(
+                                      context: context,
+                                      id: myAudio.metas.id!,
+                                    );
+
+                                    BlocProvider.of<FavRecentMostBloc>(context)
+                                        .add(
+                                      const GetSongsList(),
+                                    );
+
+                                    BlocProvider.of<FavRecentMostBloc>(context)
+                                        .add(
+                                      const GetPlaylistLength(),
+                                    );
+                                  },
+                                );
                               },
                             ),
-                            CustomIconButton(
-                              icon: (isLoop == true)
-                                  ? Icons.repeat
-                                  : Icons.repeat_one,
-                              onPressed: () {
-                                repeatButtonPressed();
-                              },
-                            ),
-                            // CustomIconButton(
-                            //   icon: Favourites.isThisFavourite(
-                            //       context: context, id: myAudio.metas.id!),
-                            //   onPressed: () {
-                            //     Favourites.addSongToFavourites(
-                            //       context: context,
-                            //       id: myAudio.metas.id!,
-                            //     );
-                            //     setState(() {
-                            //       Favourites.isThisFavourite(
-                            //         context: context,
-                            //         id: myAudio.metas.id!,
-                            //       );
-                            //     });
-                            //   },
-                            // )
                           ],
                         ),
                       ),
-                      widget.audioPlayer.builderRealtimePlayingInfos(
+                      audioPlayer.builderRealtimePlayingInfos(
                           builder: (context, info) {
                         final duration = info.current!.audio.duration;
                         final position = info.currentPosition;
@@ -272,7 +282,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                           barHeight: 7.0,
                           thumbRadius: 9.0,
                           onSeek: (duration) {
-                            widget.audioPlayer.seek(duration);
+                            audioPlayer.seek(duration);
                           },
                           timeLabelPadding: 10,
                           timeLabelTextStyle: const TextStyle(
@@ -289,11 +299,11 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                             onPressed: () async {
                               ///////////////////////////////////
                               pageController!.previousPage(
-                                duration: Duration(milliseconds: 550),
+                                duration: const Duration(milliseconds: 550),
                                 curve: Curves.linear,
                               );
                               ///////////////////////////////////
-                              await widget.audioPlayer.previous();
+                              await audioPlayer.previous();
                               Recents.addSongsToRecents(
                                   songId: myAudio.metas.id!, context: context);
                             },
@@ -301,7 +311,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                           CustomIconButton(
                             icon: Icons.replay_10,
                             onPressed: () {
-                              widget.audioPlayer.seekBy(
+                              audioPlayer.seekBy(
                                 const Duration(seconds: -10),
                               );
                             },
@@ -313,7 +323,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                             ),
                             child: Center(
                               child: PlayerBuilder.isPlaying(
-                                  player: widget.audioPlayer,
+                                  player: audioPlayer,
                                   builder: (context, isPlaying) {
                                     return IconButton(
                                       icon: Icon(
@@ -324,7 +334,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                                         size: 32,
                                       ),
                                       onPressed: () {
-                                        widget.audioPlayer.playOrPause();
+                                        audioPlayer.playOrPause();
                                       },
                                     );
                                   }),
@@ -333,7 +343,7 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                           CustomIconButton(
                             icon: Icons.forward_10,
                             onPressed: () {
-                              widget.audioPlayer.seekBy(
+                              audioPlayer.seekBy(
                                 const Duration(seconds: 10),
                               );
                             },
@@ -343,11 +353,11 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
                             onPressed: () async {
                               ////////////////////////////////////////////
                               pageController!.nextPage(
-                                duration: Duration(milliseconds: 550),
+                                duration: const Duration(milliseconds: 550),
                                 curve: Curves.linear,
                               );
                               ////////////////////////////////////////////
-                              await widget.audioPlayer.next();
+                              await audioPlayer.next();
                               Recents.addSongsToRecents(
                                 songId: myAudio.metas.id!,
                                 context: context,
@@ -383,14 +393,16 @@ class _ScreenNowPlayingState extends State<ScreenNowPlaying> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: Color(0xFF201C1B),
+                color: const Color(0xFF201C1B),
               ),
               height: screenHeight * 0.55,
               child: Column(
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        shape: StadiumBorder(), backgroundColor: kBlue),
+                      shape: const StadiumBorder(),
+                      backgroundColor: kBlue,
+                    ),
                     onPressed: () async {
                       if (myAudio.metas.artist != '<unknown>') {
                         final lyricsData = await getSongLyrics(
