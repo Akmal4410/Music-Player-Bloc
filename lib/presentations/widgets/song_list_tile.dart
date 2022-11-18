@@ -27,7 +27,6 @@ class SongListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
     return ListTile(
       onTap: () {
         Recents.addSongsToRecents(songId: songList[index].id, context: context);

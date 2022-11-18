@@ -7,8 +7,8 @@ import 'package:music_player/presentations/screens/screen_now_playing/screen_now
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:text_scroll/text_scroll.dart';
 
-class MiniPlayer extends StatefulWidget {
-  const MiniPlayer({
+class MiniPlayer extends StatelessWidget {
+  MiniPlayer({
     Key? key,
     required this.songList,
     required this.index,
@@ -19,11 +19,6 @@ class MiniPlayer extends StatefulWidget {
   final int index;
   final AssetsAudioPlayer audioPlayer;
 
-  @override
-  State<MiniPlayer> createState() => _MiniPlayerState();
-}
-
-class _MiniPlayerState extends State<MiniPlayer> {
   List<Audio> songAudio = [];
 
   Audio find(List<Audio> source, String fromPath) {
@@ -33,7 +28,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
   }
 
   void convertSongMode() {
-    for (var song in widget.songList) {
+    for (var song in songList) {
       songAudio.add(
         Audio.file(
           song.uri,
@@ -50,10 +45,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
   Future<void> openAudioPLayer() async {
     convertSongMode();
 
-    await widget.audioPlayer.open(
+    await audioPlayer.open(
       Playlist(
         audios: songAudio,
-        startIndex: widget.index,
+        startIndex: index,
       ),
       autoStart: true,
       showNotification: true,
@@ -63,15 +58,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
   }
 
   @override
-  void initState() {
-    openAudioPLayer();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    openAudioPLayer();
     final screenHeight = MediaQuery.of(context).size.height;
-    return widget.audioPlayer.builderCurrent(
+    return audioPlayer.builderCurrent(
       builder: (context, playing) {
         final myAudio = find(songAudio, playing.audio.assetAudioPath);
         Recents.addSongsToRecents(songId: myAudio.metas.id!, context: context);
@@ -94,9 +84,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     builder: (ctx) {
                       return ScreenNowPlaying(
                         songList: songAudio,
-                        index: widget.index,
+                        index: index,
                         id: myAudio.metas.id!,
-                        audioPlayer: widget.audioPlayer,
+                        audioPlayer: audioPlayer,
                       );
                     },
                   ),
@@ -117,7 +107,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     ),
                   )),
               title: TextScroll(
-                widget.audioPlayer.getCurrentAudioTitle,
+                audioPlayer.getCurrentAudioTitle,
                 velocity: const Velocity(pixelsPerSecond: Offset(40, 0)),
                 style:
                     const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
@@ -127,7 +117,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      await widget.audioPlayer.previous();
+                      await audioPlayer.previous();
                     },
                     child: const Icon(
                       Icons.skip_previous,
@@ -138,10 +128,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   const SizedBox(width: 15),
                   GestureDetector(
                     onTap: () async {
-                      await widget.audioPlayer.playOrPause();
+                      await audioPlayer.playOrPause();
                     },
                     child: PlayerBuilder.isPlaying(
-                        player: widget.audioPlayer,
+                        player: audioPlayer,
                         builder: (context, isPlaying) {
                           return Icon(
                             isPlaying == true ? Icons.pause : Icons.play_arrow,
@@ -153,7 +143,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   const SizedBox(width: 15),
                   GestureDetector(
                     onTap: () async {
-                      await widget.audioPlayer.next();
+                      await audioPlayer.next();
                     },
                     child: const Icon(
                       Icons.skip_next,

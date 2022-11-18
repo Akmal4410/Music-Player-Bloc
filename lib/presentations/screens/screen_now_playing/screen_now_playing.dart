@@ -4,7 +4,6 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/domain/models/songs.dart';
 import 'package:music_player/presentations/alert_functions.dart';
-import 'package:music_player/functions/favourites.dart';
 import 'package:music_player/functions/recents.dart';
 import 'package:music_player/domain/lyrics/lyrics_api.dart';
 import 'package:music_player/constants/palettes/color_palette.dart';

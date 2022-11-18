@@ -53,6 +53,7 @@ class UserPlaylist {
     Songs song = allSongs.firstWhere((element) => element.id.contains(songId));
 
     playlistSongs.removeWhere((element) => element.id == songId);
+
     await playlistBox.put(playlistName, playlistSongs);
 
     BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(

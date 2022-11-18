@@ -22,11 +22,9 @@ class ScreenCreatedPlaylist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
-        GetPlaylistSongs(playlistName: playlistName),
-      );
-    });
+    BlocProvider.of<ScreenCreatedPlaylistBloc>(context).add(
+      GetPlaylistSongs(playlistName: playlistName),
+    );
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
